@@ -8,6 +8,7 @@ import { EventModule } from './event/event.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomerModule } from './customer/customer.module';
 import { WaiterModule } from './waiter/waiter.module';
+import { CookModule } from './cook/cook.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WaiterModule } from './waiter/waiter.module';
     }),
     CustomerModule,
     WaiterModule,
+    CookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
