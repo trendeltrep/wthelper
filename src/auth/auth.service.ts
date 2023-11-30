@@ -11,13 +11,16 @@ import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CustomerService } from 'src/customer/customer.service';
+import { WaiterLoginpDto, WaiterSignUpDto } from 'src/waiter/dto';
+import { WaiterService } from 'src/waiter/waiter.service';
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
     private jwtService: JwtService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private waiterService: WaiterService
   ) {}
   async signUp(dto: SignUpUserDto) {
     if (await this.userService.getUser(dto.email))
@@ -86,6 +89,47 @@ export class AuthService {
       const payload = { sub: customer.id, email: customer.email };
       return {
         access_token: await this.jwtService.signAsync(payload),
+        customer: customer
+      };
+    } else {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  }
+
+
+  async waiterSignUp(dto: WaiterSignUpDto) {
+    if (await this.waiterService.getWaiter(dto.email))
+      throw new HttpException(
+        'User with this email already exists',
+        HttpStatus.FORBIDDEN,
+      );
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(dto.password, salt);
+    const createdCustomer = await this.prisma.waiter.create({
+      data: {
+        email: dto.email,
+        phoneNumber: dto.phoneNumber,
+        password:hashedPassword,
+        waiterName:dto.waiterName,
+        role:dto.role
+      },
+    });
+    return await this.waiterLogin(dto as WaiterLoginpDto);
+
+  }
+
+  async waiterLogin(dto: WaiterLoginpDto) {
+    const waiter = await this.waiterService.getWaiter(dto.email);
+    if (!waiter) {
+      throw new NotFoundException('Customer not found');
+    }
+    const match = await bcrypt.compare(dto.password, waiter.password);
+    if (match) {
+      const payload = { sub: waiter.id, email: waiter.email };
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+        waiter: waiter
       };
     } else {
       throw new UnauthorizedException('Invalid credentials');

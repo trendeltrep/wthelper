@@ -53,10 +53,11 @@ model Waiter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email       String @unique
+  email       String     @unique
   phoneNumber String
   waiterName  String
   password    String
+  role        WaiterRole
 
   orders Order[]
 
@@ -124,7 +125,7 @@ model Order {
   @@map("orders")
 }
 
-enum WaiterStatus {
+enum WaiterRole {
   ADMIN
   WAITER
 }

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventModule } from './event/event.module';
 import { ConfigModule } from '@nestjs/config';
 import { CustomerModule } from './customer/customer.module';
+import { WaiterModule } from './waiter/waiter.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CustomerModule } from './customer/customer.module';
       isGlobal: true,
     }),
     CustomerModule,
+    WaiterModule,
   ],
   controllers: [AppController],
   providers: [AppService],
