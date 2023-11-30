@@ -53,7 +53,7 @@ model Waiter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email       String
+  email       String @unique
   phoneNumber String
   waiterName  String
   password    String
@@ -80,7 +80,7 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   customerName String
-  email        String
+  email        String @unique
   phoneNumber  String
   password     String
 

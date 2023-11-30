@@ -10,12 +10,14 @@ import { SignUpUserDto, LoginUserDto, CustomerSignUpnDto, CustomerLoginDto } fro
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { CustomerService } from 'src/customer/customer.service';
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
     private jwtService: JwtService,
+    private customerService: CustomerService
   ) {}
   async signUp(dto: SignUpUserDto) {
     if (await this.userService.getUser(dto.email))
@@ -54,11 +56,11 @@ export class AuthService {
   }
 
   async customerSignUp(dto: CustomerSignUpnDto) {
-    // if (await this.userService.getUser(dto.email))
-    //   throw new HttpException(
-    //     'User with this email already exists',
-    //     HttpStatus.FORBIDDEN,
-    //   );
+    if (await this.customerService.getCustomer(dto.email))
+      throw new HttpException(
+        'User with this email already exists',
+        HttpStatus.FORBIDDEN,
+      );
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(dto.password, salt);
@@ -70,24 +72,18 @@ export class AuthService {
         customerName:dto.customerName
       },
     });
-    try{
-      await this.customerLogin(dto as CustomerLoginDto);
-      return createdCustomer
-    }
-    catch (e){
-      console.log(e)
-    }
+    return await this.customerLogin(dto as CustomerLoginDto);
 
   }
 
-  async customerLogin(dto: LoginUserDto) {
-    const user = await this.userService.getUser(dto.email);
-    if (!user) {
-      throw new NotFoundException('User not found');
+  async customerLogin(dto: CustomerLoginDto) {
+    const customer = await this.customerService.getCustomer(dto.email);
+    if (!customer) {
+      throw new NotFoundException('Customer not found');
     }
-    const match = await bcrypt.compare(dto.password, user.hash);
+    const match = await bcrypt.compare(dto.password, customer.password);
     if (match) {
-      const payload = { sub: user.id, email: user.email };
+      const payload = { sub: customer.id, email: customer.email };
       return {
         access_token: await this.jwtService.signAsync(payload),
       };

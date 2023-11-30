@@ -35,13 +35,12 @@ export class AuthController {
     @Body() signUpUserDto: CustomerSignUpnDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { access_token } = await this.authService.signUp(signUpUserDto);
+    const { access_token } = await this.authService.customerSignUp(signUpUserDto);
     response.cookie('jwt_token', access_token, {
       httpOnly: true,
       secure: true,
       maxAge: 1000 * 60 * 60,
     });
-    return access_token
   }
 
   @Post('login')

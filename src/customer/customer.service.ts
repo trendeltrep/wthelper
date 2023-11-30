@@ -12,4 +12,8 @@ export class CustomerService {
             },
           });
     }
+
+    async getCustomers(): Promise<any>{
+        return this.prisma.customer.findMany()
+    }
 }
