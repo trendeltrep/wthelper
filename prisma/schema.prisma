@@ -19,8 +19,8 @@ model User {
   events      Event[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-@@map("users")
 
+  @@map("users")
 }
 
 model Event {
@@ -35,5 +35,106 @@ model Event {
   userId     Int      @unique
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-@@map("events")
+
+  @@map("events")
+}
+
+model Table {
+  id     String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seats  Int
+  status TableStatus
+  order  Order[]
+
+  @@map("tables")
+}
+
+model Waiter {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email       String
+  phoneNumber String
+  waiterName  String
+  password    String
+
+  orders Order[]
+
+  @@map("waiter")
+}
+
+model Cook {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ageExperience Int
+  cookName      String
+  phoneNumber   String
+
+  dishes Dish[]
+
+  @@map("cooks")
+}
+
+model Customer {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerName String
+  email        String
+  phoneNumber  String
+  password     String
+
+  orders Order[]
+
+  @@map("customers")
+}
+
+model Dish {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  dishName     String
+  dishPrice    Int
+  dishWaitTime Int
+
+  cookId String @db.Uuid
+  cook   Cook   @relation(fields: [cookId], references: [id])
+
+  order Order[]
+
+  @@map("dishes")
+}
+
+model Order {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+
+  totalWaitTime Int
+  status        OrderStatus
+  totalPrice    Int
+  tip           Int
+
+  customerId String   @db.Uuid
+  customer   Customer @relation(fields: [customerId], references: [id])
+  waiterId   String   @db.Uuid
+  waiter     Waiter   @relation(fields: [waiterId], references: [id])
+  dishId     String   @db.Uuid
+  dish       Dish     @relation(fields: [dishId], references: [id])
+  tableId    String   @db.Uuid
+  table      Table    @relation(fields: [tableId], references: [id])
+
+  @@map("orders")
+}
+
+enum WaiterStatus {
+  ADMIN
+  WAITER
+}
+
+enum TableStatus {
+  TAKEN
+  FREE
+}
+
+enum OrderStatus {
+  DONE
+  MAKING
 }

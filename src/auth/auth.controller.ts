@@ -41,6 +41,10 @@ export class AuthController {
       httpOnly: true,
       maxAge: 1000 * 60 * 60,
     });
+    return {
+      message: 'Login successful',
+      access_token: access_token,
+    };
   }
 
   @Post('logout')
