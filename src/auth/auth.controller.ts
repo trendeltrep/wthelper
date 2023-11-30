@@ -7,7 +7,7 @@ import {
   Request,
   Res,
 } from '@nestjs/common';
-import { SignUpUserDto, LoginUserDto } from './dto';
+import { SignUpUserDto, LoginUserDto, CustomerSignUpnDto } from './dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Response } from 'express';
@@ -27,6 +27,21 @@ export class AuthController {
       secure: true,
       maxAge: 1000 * 60 * 60,
     });
+    return access_token
+  }
+
+  @Post('customer_signup')
+  async customer_signup(
+    @Body() signUpUserDto: CustomerSignUpnDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { access_token } = await this.authService.signUp(signUpUserDto);
+    response.cookie('jwt_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 1000 * 60 * 60,
+    });
+    return access_token
   }
 
   @Post('login')
