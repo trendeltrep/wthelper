@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CustomerModule } from './customer/customer.module';
 import { WaiterModule } from './waiter/waiter.module';
 import { CookModule } from './cook/cook.module';
+import { DishModule } from './dish/dish.module';
+import { TableModule } from './table/table.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { CookModule } from './cook/cook.module';
     CustomerModule,
     WaiterModule,
     CookModule,
+    DishModule,
+    TableModule,
   ],
   controllers: [AppController],
   providers: [AppService],
