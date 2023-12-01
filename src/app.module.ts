@@ -11,6 +11,7 @@ import { WaiterModule } from './waiter/waiter.module';
 import { CookModule } from './cook/cook.module';
 import { DishModule } from './dish/dish.module';
 import { TableModule } from './table/table.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TableModule } from './table/table.module';
     CookModule,
     DishModule,
     TableModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
