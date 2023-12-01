@@ -11,41 +11,50 @@ export class DishService {
     }
 
     async addDish(dto: AddDishDto){
+
         try{
-            const admin = await this.prisma.waiter.findFirst({
+            const check1 = await this.prisma.waiter.findFirst({
                 where: {id:dto.waiterId}
             })
-
-            switch (admin.role){
-                case 'WAITER':
-                    throw new ForbiddenException('You are not ADMIN')
-                case 'ADMIN':
-                    try{
-                        const cook = await this.prisma.cook.findFirst({
-                            where:{id:dto.cookId}
-                        })
-                        if (!cook){
-                            throw new ConflictException('There is conflict')
-                        }
-                    }
-                    catch (e){
-                        throw new NotFoundException('Not Found Cook')
-                    }
-                    
-                    const result = await this.prisma.dish.create({
-                        data:{
-                            dishName:dto.dishName,
-                            dishPrice:dto.dishPrice,
-                            dishWaitTime:dto.dishWaitTime,
-                            cook: {connect: {id: dto.cookId}}
-                        }
-                    })
-                    return result
-                }
-
         }
         catch(e){
-            throw new NotFoundException('You Are not admin')
+            throw new NotFoundException('You are not admin')
         }
+
+        try{
+            const check2 = await this.prisma.cook.findFirst({
+                where:{id:dto.cookId}
+            })
+        }
+        catch(e){
+            throw new NotFoundException("Not found this cookId")
+        }
+
+        const admin = await this.prisma.waiter.findFirst({
+            where: {id:dto.waiterId}
+        })
+
+        switch (admin.role){
+            case 'WAITER':
+                throw new ForbiddenException('You are not ADMIN')
+            case 'ADMIN':
+                    const cook = await this.prisma.cook.findFirst({
+                        where:{id:dto.cookId}
+                    })
+                    if (!cook){
+                        throw new ConflictException('There is conflict')
+                    }
+                
+                const result = await this.prisma.dish.create({
+                    data:{
+                        dishName:dto.dishName,
+                        dishPrice:dto.dishPrice,
+                        dishWaitTime:dto.dishWaitTime,
+                        cook: {connect: {id: dto.cookId}}
+                    }
+                })
+                return result
+            }
+
     }
 }
