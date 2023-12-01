@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { CreateOrderDto } from './dto';
 
 @Controller('order')
 export class OrderController {
@@ -14,8 +15,8 @@ export class OrderController {
 
     @Post('create')
     async createOrder(
-        @Body() createOrderDto
+        @Body() createOrderDto : CreateOrderDto
     ){
-        
+        return this.orderService.createOrder(createOrderDto)
     }
 }

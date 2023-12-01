@@ -1,6 +1,6 @@
 
 export class CreateOrderDto {
-    tip:number;
+    tip?:number;
     customerId:string;
     waiterId:string;
     dishId:string[];
