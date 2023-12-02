@@ -50,7 +50,7 @@ export class DishService {
                         dishName:dto.dishName,
                         dishPrice:dto.dishPrice,
                         dishWaitTime:dto.dishWaitTime,
-                        cook: {connect: {id: dto.cookId}}
+                        cook: {connect: {id: dto.cookId}},
                     }
                 })
                 return result

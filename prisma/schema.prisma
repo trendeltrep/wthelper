@@ -96,11 +96,10 @@ model Dish {
   dishPrice    Int
   dishWaitTime Int
 
-  cookId String @db.Uuid
-  cook   Cook   @relation(fields: [cookId], references: [id])
-
-  orderId String @db.Uuid
-  order   Order   @relation(fields: [orderId], references: [id])
+  cookId  String  @db.Uuid
+  cook    Cook    @relation(fields: [cookId], references: [id])
+  Order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String? @db.Uuid
 
   @@map("dishes")
 }
@@ -121,8 +120,8 @@ model Order {
   tableId    String   @db.Uuid
   table      Table    @relation(fields: [tableId], references: [id])
 
-
   dishes Dish[]
+
   @@map("orders")
 }
 

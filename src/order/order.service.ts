@@ -33,8 +33,21 @@ export class OrderService {
         const dishes = await Promise.all(
             dto.dishId.map((id)=>this.prisma.dish.findFirst({where:{id:id}}))
         )
-        const totalCost = dishes.reduce((sum, dish) => sum + dish.dishPrice, 0);
-        const totalWait = dishes.reduce((sum, dish) => sum + dish.dishWaitTime, 0);
+
+        const createNewDishes = await Promise.all(
+            dishes.map(element => {
+                this.prisma.dish.create({
+                    data:{
+                        dishName: element.dishName,
+                        dishPrice:element.dishPrice,
+                        dishWaitTime:element.dishWaitTime,
+                        cook: {connect: {id: element.cookId}}
+                    }
+                })
+            })
+        )
+        const totalCost = createNewDishes.reduce((sum, dish) => sum + dish.dishPrice, 0);
+        const totalWait = createNewDishes.reduce((sum, dish) => sum + dish.dishWaitTime, 0);
 
         const result = await this.prisma.order.create({
             data:{
@@ -45,9 +58,13 @@ export class OrderService {
                 customer: {connect: {id: dto.customerId}},
                 waiter: {connect: {id: dto.waiterId}},
                 table: {connect: {id: dto.tableId}},
-                dish:{connect:dto.dishId}
+                dishes: {
+                    connect: dto.dishId.map(id => ({ id }))
+                }
+    
             },
-            include:{dish:{select:{id:true}}}
+            include:{dishes:{select:{id:true}}}
+
         })
         const waiter = await this.prisma.waiter.findFirst({
             where:{id:dto.waiterId}
@@ -60,6 +77,6 @@ export class OrderService {
         })
         
 
-        return dishes
+        return result
     }
 }

@@ -4,4 +4,5 @@ export class AddDishDto{
     dishPrice:number;
     dishWaitTime:number;
     cookId:string;
+    orderId:string;
 }
