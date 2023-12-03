@@ -1,6 +1,6 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddCookDto } from './dto';
+import { AddCookDto, UpdateCookDto } from './dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
@@ -32,6 +32,23 @@ export class CookService {
 
     async getAllCooks(): Promise<any>{
         return this.prisma.cook.findMany()
+    }
+
+    async getById(id){
+        return this.prisma.cook.findFirst({where:{id:id}})
+    }
+
+    async update(id,body:UpdateCookDto){
+        return this.prisma.cook.update({where : {id:id},
+        data:{
+            ageExperience:body.ageExperience,
+            cookName:body.cookName,
+            phoneNumber: body.phoneNumber
+        }})
+    }
+
+    async delete(id){
+        await this.prisma.cook.delete({where:{id}})
     }
 
 }

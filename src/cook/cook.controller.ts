@@ -1,7 +1,7 @@
-import { Body, Controller,Get,Post } from '@nestjs/common';
+import { Body, Controller,Delete,Get,Param,Patch,Post } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CookService } from './cook.service';
-import { AddCookDto } from './dto';
+import { AddCookDto, UpdateCookDto } from './dto';
 
 @Controller('cook')
 export class CookController {
@@ -17,5 +17,25 @@ export class CookController {
         @Get()
         async getCooks(){
             return this.cookService.getAllCooks()
+        }
+
+        @Get(':id')
+        async getById(
+            @Param('id') id:string){
+                return this.cookService.getById(id)
+        }
+
+        @Patch(':id')
+        async update(
+            @Param('id') id:string,
+            @Body() body : UpdateCookDto
+        ){
+            return this.cookService.update(id,body)
+
+        }
+
+        @Delete(':id')
+        async delete(@Param('id') id:string){
+            return this.cookService.delete(id)
         }
 }

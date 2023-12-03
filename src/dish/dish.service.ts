@@ -74,21 +74,42 @@ export class DishService {
       }
       
       async updateDish(id:string,body:UpdateDishDto){
-        const check1 = body.cookId? {connect:{id:body.cookId}}:null
-        const check2 = body.orderId? {connect:{id:body.orderId}}:null
-        console.log(check1,check2)
-        const result = await this.prisma.dish.update({
-          where:{id:id},
-          data: {
-            dishName:body.dishName,
-            dishPrice:body.dishPrice,
-            dishWaitTime:body.dishWaitTime,
-            cook:check1,
-            order:check2
-          },
-          include:{cook:{select:{id:true}},order:{select:{id:true}}}
-        })
-        return result
+        let get = {
+              dishName:body.dishName,
+              dishPrice:body.dishPrice,
+              dishWaitTime:body.dishWaitTime,
+            }
+        
+        if (body.cookId&& body.orderId){
+            return await this.prisma.dish.update({
+                where:{id},
+                data:{
+                ...get,
+                cook:{connect:{id:body.cookId}},
+                order:{connect:{id:body.orderId}}
+            }})
+        }
+        if (body.cookId ){
+            return await this.prisma.dish.update({
+                where:{id},
+                data:{
+                ...get,
+                cook:{connect:{id:body.cookId}},
+            }})
+        }
+        if (body.orderId){
+            return await this.prisma.dish.update({
+                where:{id},
+                data:{
+                ...get,
+                order:{connect:{id:body.orderId}}
+            }})
+        }
+
+        return await this.prisma.dish.update({
+            where:{id},
+            data:{...get}})
+        
       }
   
       async deleteDish(id:string){

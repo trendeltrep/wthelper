@@ -68,15 +68,7 @@ export class OrderService {
             include:{dishes:{select:{id:true}}}
 
         })
-        const waiter = await this.prisma.waiter.findFirst({
-            where:{id:dto.waiterId}
-        })
-        const customer = await this.prisma.customer.findFirst({
-            where:{id:dto.customerId}
-        })
-        const table = await this.prisma.table.findFirst({
-            where:{id:dto.tableId}
-        })
+
         
 
         return result

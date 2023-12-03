@@ -1,6 +1,7 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddTableDto } from './dto';
+import { UpdateTableDto } from './dto/update-table.dto';
 
 @Injectable()
 export class TableService {
@@ -26,5 +27,21 @@ export class TableService {
 
     async getTables(){
         return this.prisma.table.findMany()
+    }
+
+    async getById(id){
+        return this.prisma.table.findFirst({where:{id:id}})
+    }
+
+    async update(id,body:UpdateTableDto){
+        return this.prisma.table.update({where : {id:id},
+        data:{
+            seats:body.seats,
+            status:body.status,
+        }})
+    }
+
+    async delete(id){
+        await this.prisma.table.delete({where:{id}})
     }
 }
