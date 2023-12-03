@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddDishDto } from './dto';
+import { AddDishDto, UpdateDishDto } from './dto';
 
 @Injectable()
 export class DishService {
@@ -65,4 +65,33 @@ export class DishService {
             }
 
     }
+
+
+    async getById(id){
+        return this.prisma.dish.findFirst({
+          where:{id:id}
+        })
+      }
+      
+      async updateDish(id:string,body:UpdateDishDto){
+        const check1 = body.cookId? {connect:{id:body.cookId}}:null
+        const check2 = body.orderId? {connect:{id:body.orderId}}:null
+        console.log(check1,check2)
+        const result = await this.prisma.dish.update({
+          where:{id:id},
+          data: {
+            dishName:body.dishName,
+            dishPrice:body.dishPrice,
+            dishWaitTime:body.dishWaitTime,
+            cook:check1,
+            order:check2
+          },
+          include:{cook:{select:{id:true}},order:{select:{id:true}}}
+        })
+        return result
+      }
+  
+      async deleteDish(id:string){
+        await this.prisma.dish.delete({where:{id}})
+      }
 }

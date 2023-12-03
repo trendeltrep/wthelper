@@ -96,9 +96,9 @@ model Dish {
   dishPrice    Int
   dishWaitTime Int
 
-  cookId  String  @db.Uuid
-  cook    Cook    @relation(fields: [cookId], references: [id])
-  Order   Order?  @relation(fields: [orderId], references: [id])
+  cookId  String? @db.Uuid
+  cook    Cook?   @relation(fields: [cookId], references: [id], onDelete: SetNull)
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
   orderId String? @db.Uuid
 
   @@map("dishes")
@@ -114,12 +114,12 @@ model Order {
   totalPrice    Int
   tip           Int?
 
-  customerId String   @db.Uuid
-  customer   Customer @relation(fields: [customerId], references: [id])
-  waiterId   String   @db.Uuid
-  waiter     Waiter   @relation(fields: [waiterId], references: [id])
-  tableId    String   @db.Uuid
-  table      Table    @relation(fields: [tableId], references: [id])
+  customerId String?   @db.Uuid
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  waiterId   String?   @db.Uuid
+  waiter     Waiter?   @relation(fields: [waiterId], references: [id], onDelete: SetNull)
+  tableId    String?   @db.Uuid
+  table      Table?    @relation(fields: [tableId], references: [id], onDelete: SetNull)
 
   dishes Dish[]
 

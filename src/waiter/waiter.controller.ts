@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WaiterService } from './waiter.service';
 import { WaiterLoginpDto } from './dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('waiter')
 export class WaiterController {
@@ -26,5 +27,7 @@ export class WaiterController {
     async delete(@Param('id') id:string){
         return this.waiterService.deleteWaiter(id)
     }
+
+    
 
 }

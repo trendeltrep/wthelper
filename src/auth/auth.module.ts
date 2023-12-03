@@ -23,5 +23,6 @@ import { WaiterModule } from 'src/waiter/waiter.module';
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports:[AuthService]
 })
 export class AuthModule {}

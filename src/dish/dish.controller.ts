@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { DishService } from './dish.service';
-import { AddDishDto } from './dto';
+import { AddDishDto, UpdateDishDto } from './dto';
 
 @Controller('dish')
 export class DishController {
@@ -22,5 +22,22 @@ export class DishController {
     @Post('add')
     async addDish(@Body() addDishDto:AddDishDto){
         return this.dishService.addDish(addDishDto)
+    }
+
+    @Get(':id')
+    async getById(@Param('id') id: string){
+        return this.dishService.getById(id)
+    }
+
+    @Patch(':id')
+    async updateWaiter(
+        @Param('id') id :string,
+        @Body() body:UpdateDishDto){
+            return this.dishService.updateDish(id,body)
+        }
+
+    @Delete(':id')
+    async delete(@Param('id') id:string){
+        return this.dishService.deleteDish(id)
     }
 }

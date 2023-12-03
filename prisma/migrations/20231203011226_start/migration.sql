@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "WaiterStatus" AS ENUM ('ADMIN', 'WAITER');
+CREATE TYPE "WaiterRole" AS ENUM ('ADMIN', 'WAITER');
 
 -- CreateEnum
 CREATE TYPE "TableStatus" AS ENUM ('TAKEN', 'FREE');
@@ -54,6 +54,7 @@ CREATE TABLE "waiter" (
     "phoneNumber" TEXT NOT NULL,
     "waiterName" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "role" "WaiterRole" NOT NULL,
 
     CONSTRAINT "waiter_pkey" PRIMARY KEY ("id")
 );
@@ -87,7 +88,8 @@ CREATE TABLE "dishes" (
     "dishName" TEXT NOT NULL,
     "dishPrice" INTEGER NOT NULL,
     "dishWaitTime" INTEGER NOT NULL,
-    "cookId" UUID NOT NULL,
+    "cookId" UUID,
+    "orderId" UUID,
 
     CONSTRAINT "dishes_pkey" PRIMARY KEY ("id")
 );
@@ -96,14 +98,14 @@ CREATE TABLE "dishes" (
 CREATE TABLE "orders" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "totalWaitTime" INTEGER NOT NULL,
     "status" "OrderStatus" NOT NULL,
     "totalPrice" INTEGER NOT NULL,
-    "tip" INTEGER NOT NULL,
-    "customerId" UUID NOT NULL,
-    "waiterId" UUID NOT NULL,
-    "dishId" UUID NOT NULL,
-    "tableId" UUID NOT NULL,
+    "tip" INTEGER,
+    "customerId" UUID,
+    "waiterId" UUID,
+    "tableId" UUID,
 
     CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
 );
@@ -114,20 +116,26 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "events_userId_key" ON "events"("userId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "waiter_email_key" ON "waiter"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "customers_email_key" ON "customers"("email");
+
 -- AddForeignKey
 ALTER TABLE "events" ADD CONSTRAINT "events_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "dishes" ADD CONSTRAINT "dishes_cookId_fkey" FOREIGN KEY ("cookId") REFERENCES "cooks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "dishes" ADD CONSTRAINT "dishes_cookId_fkey" FOREIGN KEY ("cookId") REFERENCES "cooks"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "dishes" ADD CONSTRAINT "dishes_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_waiterId_fkey" FOREIGN KEY ("waiterId") REFERENCES "waiter"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_dishId_fkey" FOREIGN KEY ("dishId") REFERENCES "dishes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_waiterId_fkey" FOREIGN KEY ("waiterId") REFERENCES "waiter"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_tableId_fkey" FOREIGN KEY ("tableId") REFERENCES "tables"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_tableId_fkey" FOREIGN KEY ("tableId") REFERENCES "tables"("id") ON DELETE SET NULL ON UPDATE CASCADE;
