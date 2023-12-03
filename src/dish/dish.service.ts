@@ -10,6 +10,14 @@ export class DishService {
         return this.prisma.dish.findMany()
     }
 
+    async getAllDishesNoOrder(){
+        return this.prisma.dish.findMany({
+            where:{
+                orderId: null
+            }
+        })
+    }
+
     async addDish(dto: AddDishDto){
 
         try{

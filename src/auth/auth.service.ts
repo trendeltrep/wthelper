@@ -84,6 +84,9 @@ export class AuthService {
     if (!customer) {
       throw new NotFoundException('Customer not found');
     }
+    if (customer.customerName !== dto.customerName || customer.phoneNumber!== dto.phoneNumber){
+      throw new UnauthorizedException("Invalid credentials");
+    }
     const match = await bcrypt.compare(dto.password, customer.password);
     if (match) {
       const payload = { sub: customer.id, email: customer.email };
@@ -123,6 +126,9 @@ export class AuthService {
     const waiter = await this.waiterService.getWaiter(dto.email);
     if (!waiter) {
       throw new NotFoundException('Customer not found');
+    }
+    if (waiter.waiterName !== dto.waiterName || waiter.phoneNumber!== dto.phoneNumber){
+      throw new UnauthorizedException("Invalid credentials");
     }
     const match = await bcrypt.compare(dto.password, waiter.password);
     if (match) {

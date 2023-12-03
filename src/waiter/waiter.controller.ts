@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WaiterService } from './waiter.service';
+import { WaiterLoginpDto } from './dto';
 
 @Controller('waiter')
 export class WaiterController {
@@ -10,4 +11,20 @@ export class WaiterController {
     async getAllWaiter(){
         return this.waiterService.getWaiters()
     }
+
+    @Get(':id')
+    async getById(@Param('id') id: string){
+        return this.waiterService.getById(id)
+    }
+
+    @Patch(':id')
+    async updateWaiter(@Param('id') id :string,
+    @Body() body:WaiterLoginpDto)
+    {return this.waiterService.updateWaiter(id,body)}
+
+    @Delete(':id')
+    async delete(@Param('id') id:string){
+        return this.waiterService.deleteWaiter(id)
+    }
+
 }

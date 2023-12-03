@@ -12,6 +12,8 @@ export class OrderService {
         return this.prisma.order.findMany()
     }
 
+    
+
     async createOrder(dto: CreateOrderDto){
         try{
             const waiter = await this.prisma.waiter.findFirst({
@@ -36,7 +38,7 @@ export class OrderService {
 
         const createNewDishes = await Promise.all(
             dishes.map(element => {
-                this.prisma.dish.create({
+                return this.prisma.dish.create({
                     data:{
                         dishName: element.dishName,
                         dishPrice:element.dishPrice,
@@ -59,7 +61,7 @@ export class OrderService {
                 waiter: {connect: {id: dto.waiterId}},
                 table: {connect: {id: dto.tableId}},
                 dishes: {
-                    connect: dto.dishId.map(id => ({ id }))
+                    connect: createNewDishes.map(dish => ({ id: dish.id }))
                 }
     
             },

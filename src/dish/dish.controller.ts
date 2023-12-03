@@ -12,6 +12,13 @@ export class DishController {
         return this.dishService.getAllDishes()
     }
 
+    @Get('no_order')
+    async getAllDishesNoOrder(){
+        return this.dishService.getAllDishesNoOrder()
+    }
+    
+    
+
     @Post('add')
     async addDish(@Body() addDishDto:AddDishDto){
         return this.dishService.addDish(addDishDto)
