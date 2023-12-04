@@ -7,12 +7,9 @@ import {
   Request,
   Res,
 } from '@nestjs/common';
-import { SignUpUserDto, LoginUserDto, CustomerSignUpnDto, CustomerLoginDto } from './dto';
+import { CustomerSignUpnDto, CustomerLoginDto, WaiterSignUpDto, WaiterLoginpDto } from './dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
 import { Response } from 'express';
-import { CustomerService } from 'src/customer/customer.service';
-import { WaiterLoginpDto, WaiterSignUpDto } from 'src/waiter/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,19 +17,6 @@ export class AuthController {
     private authService: AuthService, 
     ) {}
 
-  @Post('signup')
-  async signup(
-    @Body() signUpUserDto: SignUpUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const { access_token } = await this.authService.signUp(signUpUserDto);
-    response.cookie('jwt_token', access_token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 1000 * 60 * 60,
-    });
-    return access_token
-  }
 
   @Post('customer_signup')
   async customer_signup(
@@ -49,23 +33,6 @@ export class AuthController {
     return customer
   }
 
-  @Post('login')
-  async login(
-    @Body() signInUserDto: LoginUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    const { access_token } = await this.authService.login(signInUserDto);
-
-    response.cookie('jwt_token', access_token, {
-      secure: true,
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60,
-    });
-    return {
-      message: 'Login successful',
-      access_token: access_token,
-    };
-  }
 
   @Post('customer_login')
   async customer_login(
@@ -84,14 +51,6 @@ export class AuthController {
       access_token: access_token,
       customer
     };
-  }
-
-  @Post('logout')
-  async logout(
-    @Body() signInUserDto: LoginUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    response.clearCookie('jwt_token');
   }
 
   
@@ -129,13 +88,12 @@ export class AuthController {
     };
   }
 
-
-  @UseGuards(AuthGuard)
-  @Get('info')
-  getUserInfo(@Request() req) {
-    return {
-      email: req.user.email,
-      phoneNumber: req.user.phoneNumber,
-    };
+  @Post('logout')
+  async logout(
+    @Body() signInUserDto: CustomerLoginDto|WaiterLoginpDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.clearCookie('jwt_token');
   }
+
 }

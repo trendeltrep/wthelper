@@ -1,8 +1,9 @@
-import { Body, Controller,Delete,Get,Param,Patch,Post } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Body, Controller,Delete,Get,Param,Patch,Post, UseGuards } from '@nestjs/common';
 import { CookService } from './cook.service';
 import { AddCookDto, UpdateCookDto } from './dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('cook')
 export class CookController {
     constructor (private cookService: CookService){}

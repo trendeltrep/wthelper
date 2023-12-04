@@ -1,7 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@UseGuards(AuthGuard)
 @Controller('order')
 export class OrderController {
 
@@ -19,5 +23,27 @@ export class OrderController {
         @Body() createOrderDto : CreateOrderDto
     ){
         return this.orderService.createOrder(createOrderDto)
+    }
+
+    @Get(':id')
+    async getById(
+        @Param('id') id:string
+    ){
+        return this.orderService.getById(id)
+    }
+
+    @Patch(':id')
+    async update(
+        @Param('id') id:string,
+        @Body() body:UpdateOrderDto
+    ){
+        return this.orderService.update(id,body)
+    }
+
+    @Delete(':id')
+    async delete(
+        @Param('id') id:string
+    ){
+        return this.orderService.delete(id)
     }
 }

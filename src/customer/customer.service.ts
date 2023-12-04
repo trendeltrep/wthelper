@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerLoginDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import * as EmailValidator from 'email-validator';
+
+
 @Injectable()
 export class CustomerService {
     constructor(private prisma:PrismaService){}
@@ -25,6 +28,10 @@ export class CustomerService {
       }
   
       async updateCustomer(id:string,body:CustomerLoginDto){
+
+        if (!EmailValidator.validate(body.email) ){
+          throw new BadRequestException("Invalid email")
+        }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(body.password,salt)
         const result = await this.prisma.customer.update({

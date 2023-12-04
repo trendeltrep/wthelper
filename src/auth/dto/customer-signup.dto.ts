@@ -1,6 +1,7 @@
+
 export class CustomerSignUpnDto {
-    customerName: string;
     email:string;
+    customerName: string;
     phoneNumber:string;
     password:string;
   }

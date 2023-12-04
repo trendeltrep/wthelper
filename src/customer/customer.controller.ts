@@ -3,6 +3,7 @@ import { CustomerService } from './customer.service';
 import { CustomerLoginDto } from 'src/auth/dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('customer')
 export class CustomerController {
     constructor(private readonly customerService: CustomerService){}

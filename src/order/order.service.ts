@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto';
 import { OrderStatus } from 'src/constants/enum';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -69,8 +70,25 @@ export class OrderService {
 
         })
 
-        
-
         return result
+    }
+
+    async getById(id){
+        return this.prisma.order.findFirst({where:{id}})
+    }
+
+    async update(id,body:UpdateOrderDto){
+        return await this.prisma.order.update({where:{id},
+        data:{
+            status:body.status,
+            tip:body.tip,
+            customer:{connect:{id:body.customerId}},
+            waiter:{connect:{id:body.waiterId}},
+            table:{connect:{id:body.tableId}}
+        }})
+    }
+
+    async delete(id){
+        await this.prisma.order.delete({where:{id}})
     }
 }
