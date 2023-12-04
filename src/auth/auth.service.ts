@@ -32,13 +32,16 @@ export class AuthService {
     if (!EmailValidator.validate(dto.email) ){
       throw new BadRequestException("Invalid email")
     }
+    if (dto.phoneNumber.length>10){
+      throw new BadRequestException('Invalid phone number')
+    }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(dto.password, salt);
     const createdCustomer = await this.prisma.customer.create({
       data: {
         email: dto.email,
-        phoneNumber: dto.phoneNumber,
+        phoneNumber: `+38${dto.phoneNumber}`,
         password:hashedPassword,
         customerName:dto.customerName
       },

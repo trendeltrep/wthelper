@@ -32,13 +32,17 @@ export class CustomerService {
         if (!EmailValidator.validate(body.email) ){
           throw new BadRequestException("Invalid email")
         }
+        if (body.phoneNumber.length>10){
+          throw new BadRequestException('Invalid phone number')
+        }
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(body.password,salt)
         const result = await this.prisma.customer.update({
           where:{id:id},
           data: {
             email: body.email,
-            phoneNumber: body.phoneNumber,
+            phoneNumber: `+38${body.phoneNumber}`,
             password: hashedPassword,
             customerName:body.customerName
           }
