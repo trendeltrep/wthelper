@@ -3,8 +3,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CustomerModule } from 'src/customer/customer.module';
-import { WaiterModule } from 'src/waiter/waiter.module';
+import { CustomerModule } from 'src/api/customer/customer.module';
+import { WaiterModule } from 'src/api/waiter/waiter.module';
 
 @Module({
   imports: [

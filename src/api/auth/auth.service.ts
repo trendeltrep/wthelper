@@ -10,8 +10,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CustomerSignUpnDto, CustomerLoginDto, WaiterSignUpDto, WaiterLoginpDto } from './dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { CustomerService } from 'src/customer/customer.service';
-import { WaiterService } from 'src/waiter/waiter.service';
+import { CustomerService } from 'src/api/customer/customer.service';
+import { WaiterService } from 'src/api/waiter/waiter.service';
 import * as EmailValidator from 'email-validator';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AuthService {
     if (!EmailValidator.validate(dto.email) ){
       throw new BadRequestException("Invalid email")
     }
-    if (dto.phoneNumber.length>10){
+    if (!/^\d{10}$/.test(dto.phoneNumber)){
       throw new BadRequestException('Invalid phone number')
     }
     const saltRounds = 10;
@@ -41,7 +41,7 @@ export class AuthService {
     const createdCustomer = await this.prisma.customer.create({
       data: {
         email: dto.email,
-        phoneNumber: `+38${dto.phoneNumber}`,
+        phoneNumber: dto.phoneNumber,
         password:hashedPassword,
         customerName:dto.customerName
       },
@@ -79,6 +79,9 @@ export class AuthService {
       );
     if (!EmailValidator.validate(dto.email) ){
       throw new BadRequestException("Invalid email")
+    }
+    if (!/^\d{10}$/.test(dto.phoneNumber)){
+      throw new BadRequestException('Invalid phone number')
     }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);

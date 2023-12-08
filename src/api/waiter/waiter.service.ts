@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { WaiterLoginpDto } from 'src/auth/dto';
+import { WaiterLoginpDto } from 'src/api/auth/dto';
 import * as EmailValidator from 'email-validator';
 
 
@@ -31,6 +31,9 @@ export class WaiterService {
       
       if (!EmailValidator.validate(body.email) ){
         throw new BadRequestException("Invalid email")
+      }
+      if (!/^\d{10}$/.test(body.phoneNumber)){
+        throw new BadRequestException('Invalid phone number')
       }
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(body.password,salt)

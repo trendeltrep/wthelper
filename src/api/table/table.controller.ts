@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { TableService } from './table.service';
+import { AuthGuard } from 'src/api/auth/auth.guard';
 import { AddTableDto } from './dto';
 import { UpdateTableDto } from './dto/update-table.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
 
 @UseGuards(AuthGuard)
 @Controller('table')

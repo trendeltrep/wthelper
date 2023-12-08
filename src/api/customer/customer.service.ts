@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CustomerLoginDto } from 'src/auth/dto';
+import { CustomerLoginDto } from 'src/api/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as EmailValidator from 'email-validator';
@@ -28,21 +28,19 @@ export class CustomerService {
       }
   
       async updateCustomer(id:string,body:CustomerLoginDto){
-
         if (!EmailValidator.validate(body.email) ){
           throw new BadRequestException("Invalid email")
         }
-        if (body.phoneNumber.length>10){
+        if (!/^\d{10}$/.test(body.phoneNumber)){
           throw new BadRequestException('Invalid phone number')
         }
-        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(body.password,salt)
         const result = await this.prisma.customer.update({
           where:{id:id},
           data: {
             email: body.email,
-            phoneNumber: `+38${body.phoneNumber}`,
+            phoneNumber: body.phoneNumber,
             password: hashedPassword,
             customerName:body.customerName
           }

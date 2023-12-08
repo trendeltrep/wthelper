@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@n
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/api/auth/auth.guard';
 
 
 @UseGuards(AuthGuard)

@@ -1,7 +1,7 @@
 import { Body, Controller,Delete,Get,Param,Patch,Post, UseGuards } from '@nestjs/common';
 import { CookService } from './cook.service';
 import { AddCookDto, UpdateCookDto } from './dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/api/auth/auth.guard';
 
 @UseGuards(AuthGuard)
 @Controller('cook')

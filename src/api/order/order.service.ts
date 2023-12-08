@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto';
-import { OrderStatus } from 'src/constants/enum';
+import { OrderStatus, TableStatus } from 'src/constants/enum';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
@@ -9,13 +9,15 @@ export class OrderService {
 
     constructor ( private prisma: PrismaService){}
 
+    // Get all orders
     async getAllOrders(){
         return this.prisma.order.findMany()
     }
 
     
-
+    //Create order
     async createOrder(dto: CreateOrderDto){
+        //check if needed props are given
         try{
             const waiter = await this.prisma.waiter.findFirst({
                 where:{id:dto.waiterId}
@@ -51,7 +53,19 @@ export class OrderService {
         )
         const totalCost = createNewDishes.reduce((sum, dish) => sum + dish.dishPrice, 0);
         const totalWait = createNewDishes.reduce((sum, dish) => sum + dish.dishWaitTime, 0);
+        
+        const ifTaken = await this.prisma.table.findFirst({where:{id:dto.tableId}})
+        if(ifTaken.status== TableStatus.TAKEN){
+            throw new ForbiddenException('Table is already taken')
+        }
 
+        //change table status from FREE to TAKEN
+        const changeTable = await this.prisma.table.update({
+            where: {id:dto.tableId},
+            data:{status:TableStatus.TAKEN}
+        })
+        
+        //creating order
         const result = await this.prisma.order.create({
             data:{
                 totalPrice:totalCost,
@@ -73,10 +87,12 @@ export class OrderService {
         return result
     }
 
+    // return order via ID
     async getById(id){
         return this.prisma.order.findFirst({where:{id}})
     }
 
+    // updated order via ID
     async update(id,body:UpdateOrderDto){
         return await this.prisma.order.update({where:{id},
         data:{
@@ -87,8 +103,16 @@ export class OrderService {
             table:{connect:{id:body.tableId}}
         }})
     }
-
+    // delete order via ID
     async delete(id){
+        const order = await this.prisma.order.findFirst({where:{id}})
+        
+        // change tablestatus of table from TAKEN to FREE
+        const changeTableStatus = await this.prisma.table.update({where:{id:order.tableId},
+        data:{
+            status: TableStatus.FREE
+        }})
+        
         await this.prisma.order.delete({where:{id}})
     }
 }

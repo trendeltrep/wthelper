@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WaiterService } from './waiter.service';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { WaiterLoginpDto } from 'src/auth/dto';
+import { AuthGuard } from 'src/api/auth/auth.guard';
+import { WaiterLoginpDto } from 'src/api/auth/dto';
 
 
 @UseGuards(AuthGuard)
