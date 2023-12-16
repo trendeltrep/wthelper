@@ -1,14 +1,21 @@
 import { Injectable,ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddCookDto, UpdateCookDto } from './dto';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class CookService {
     constructor (private prisma:PrismaService){}
 
     async addCook(dto:AddCookDto){
+        try{
+            const admin = await this.prisma.waiter.findFirst({
+                where: {id:dto.waiterId}
+            })
 
+        }
+        catch(e){
+            throw new ForbiddenException('Forbidden access')
+        }
         const admin = await this.prisma.waiter.findFirst({
             where: {id:dto.waiterId}
         })
