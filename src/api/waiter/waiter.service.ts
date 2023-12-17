@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { WaiterLoginpDto } from 'src/api/auth/dto';
@@ -27,26 +27,44 @@ export class WaiterService {
       })
     }
 
-    async updateWaiter(id:string,body:WaiterLoginpDto){
+    // async updateWaiter(id:string,body:WaiterLoginpDto){
       
-      if (!EmailValidator.validate(body.email) ){
-        throw new BadRequestException("Invalid email")
+    //   if (!EmailValidator.validate(body.email) ){
+    //     throw new BadRequestException("Invalid email")
+    //   }
+    //   if (!/^\d{10}$/.test(body.phoneNumber)){
+    //     throw new BadRequestException('Invalid phone number')
+    //   }
+    //   const salt = await bcrypt.genSalt(10);
+    //   const hashedPassword = await bcrypt.hash(body.password,salt)
+    //   const result = await this.prisma.waiter.update({
+    //     where:{id:id},
+    //     data: {
+    //       email: body.email,
+    //       phoneNumber: body.phoneNumber,
+    //       password: hashedPassword,
+    //       waiterName:body.waiterName
+    //     }
+    //   })
+    //   return result
+    // }
+
+    async updateWaiter(id:string,body){
+      try{
+        console.log(id)
+        console.log(body)
+        const result = await this.prisma.waiter.update({
+          where:{id:id},
+          data: {
+            hearbeat:body.hearbeat
+          }
+        })
+        return result
       }
-      if (!/^\d{10}$/.test(body.phoneNumber)){
-        throw new BadRequestException('Invalid phone number')
+      catch(e){
+        throw new ForbiddenException()
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(body.password,salt)
-      const result = await this.prisma.waiter.update({
-        where:{id:id},
-        data: {
-          email: body.email,
-          phoneNumber: body.phoneNumber,
-          password: hashedPassword,
-          waiterName:body.waiterName
-        }
-      })
-      return result
+      
     }
 
     async deleteWaiter(id:string){

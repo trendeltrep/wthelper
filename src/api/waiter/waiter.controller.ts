@@ -1,11 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WaiterService } from './waiter.service';
 import { AuthGuard } from 'src/api/auth/auth.guard';
 import { WaiterLoginpDto } from 'src/api/auth/dto';
 
 
-@UseGuards(AuthGuard)
 @Controller('waiter')
 export class WaiterController {
     constructor(private waiterService:WaiterService){}
@@ -20,8 +19,15 @@ export class WaiterController {
         return this.waiterService.getById(id)
     }
 
-    @Patch(':id')
-    async updateWaiter(@Param('id') id :string,
+
+    // @Patch(':id')
+    // async updateWaiter(@Param('id') id :string,
+    // @Body() body:WaiterLoginpDto)
+    // {return this.waiterService.updateWaiter(id,body)}
+
+
+    @Post()
+    async updateWaiter(@Headers('Waiter-Id') id :string,
     @Body() body:WaiterLoginpDto)
     {return this.waiterService.updateWaiter(id,body)}
 
