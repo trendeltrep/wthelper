@@ -28,7 +28,7 @@ model Waiter {
   phoneNumber String
   waiterName  String
   password    String
-  hearbeat    Int?
+  heartbeat   Int?
   role        WaiterRole
 
   orders Order[]

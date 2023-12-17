@@ -51,15 +51,14 @@ export class WaiterService {
 
     async updateWaiter(id:string,body){
       try{
-        console.log(id)
-        console.log(body)
+        console.log("1")
         const result = await this.prisma.waiter.update({
           where:{id:id},
           data: {
-            hearbeat:body.hearbeat
+            heartbeat:body.heartbeat
           }
         })
-        return result
+        return result.heartbeat
       }
       catch(e){
         throw new ForbiddenException()

@@ -3,12 +3,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma/prisma.service';
 import * as cookieParser from 'cookie-parser';
-
+import * as fs from 'fs'
 // Async function to bootstrap the application
 async function bootstrap() {
   
   // Create a NestJS application instance
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions = {
+    key: fs.readFileSync('./secrets/cert.key'),
+    cert: fs.readFileSync('./secrets/cert.crt'),
+  };
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+  });
   
   // Enable Cross-Origin Resource Sharing (CORS) for the specified origin, methods, and credentials
   app.enableCors({
@@ -25,6 +31,8 @@ async function bootstrap() {
 
    // Enable Prisma's shutdown hooks to properly close connections on shutdown
   await prismaService.enableShutdownHooks(app);
+
+  
 
   // Start listening for incoming requests on port 3001
   await app.listen(3001);
