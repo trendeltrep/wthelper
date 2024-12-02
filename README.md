@@ -1,3 +1,17 @@
+
+```bash
+git clone <URL_репозиторію>
+cd <назва_папки_проєкту>
+```
+
+
+
+```
+git clone <URL_репозиторію>
+cd <назва_папки_проєкту>
+```
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
